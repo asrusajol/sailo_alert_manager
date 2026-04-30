@@ -37,7 +37,7 @@ def store_sensor_state(data):
         cursor.execute(query, values)
         conn.commit()
         print(data)
-        print(f"Data have been saved in Database")
+        print("Data have been saved in Database")
 
     except Exception as e:
         print("Error: ", e)

@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
+
 from insert_state_database import store_sensor_state
 from send_notification import process_data
 
@@ -12,15 +13,14 @@ async def collect(request: Request, background_tasks: BackgroundTasks):
     try:
         data = await request.json()
         if "sensor_states" not in data:
-            raise HTTPException(status_code=400, detail="Missing Sensor output")
-       
-        # Run both tasks in background (non-blocking)
+            raise HTTPException(status_code=400, detail="Missing sensor_states")
+
         background_tasks.add_task(process_data, data)
-        background_tasks.add_task(store_sensor_state,data)
+        background_tasks.add_task(store_sensor_state, data)
 
         return {
             "status": "success",
-            "message": "Data written to database",
+            "message": "Data received and scheduled for processing",
         }
     except Exception as e:
-        print(e)
+        raise HTTPException(status_code=400, detail=str(e))
